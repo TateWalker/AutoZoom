@@ -79,6 +79,7 @@ class WarningDialog(QDialog):
     def init_ui(self):
         self.resize(600, 100)
         self.center()
+        self.setFixedSize(self.size())
         self.setWindowTitle("Oops!")
         self.layout1 = QVBoxLayout()
         self.layout2 = QHBoxLayout()
@@ -113,6 +114,7 @@ class ClearDialog(WarningDialog):
     def init_ui(self):
         self.resize(600, 100)
         self.center()
+        self.setFixedSize(self.size())
         self.setWindowTitle("Clear Classes")
         self.layout1 = QVBoxLayout()
         self.layout2 = QHBoxLayout()
@@ -158,11 +160,16 @@ class KeyWindow(QDialog):
             self.init_ui()
             self.setLayout(self.layout1)
             self.exec()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            sys.exit()
         
 
     def init_ui(self):
         self.resize(600, 100)
         self.center()
+        self.setFixedSize(self.size())
         self.setWindowTitle("AutoZoom")
         self.layout1 = QVBoxLayout()
         self.layout2 = QHBoxLayout()
@@ -227,6 +234,7 @@ class MainWindow(QMainWindow):
         self.classes = {}
         self.resize(600, 200)
         self.center()
+        self.setFixedSize(self.size())
         self.setWindowTitle("AutoZoom")
         self.tabWidget = QTabWidget()
         self.tabWidget.tabBar().setSelectionBehaviorOnRemove(1)
