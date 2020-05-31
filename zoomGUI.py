@@ -144,8 +144,9 @@ class KeyWindow(QDialog):
         keyFile = getPath('.keyFile')
         self.key = ''
         try:
-            with open(keyFile,'r') as f:
-                self.key = f.read()
+            f = open(keyFile,'r')
+            self.key = f.read()
+            f.close()
             activated, message = keyValidation.main(self.key)
             if activated:
                 return
@@ -372,9 +373,10 @@ class MainWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     window = MainWindow()
-    window.setWindowFlags(Qt.WindowStaysOnTopHint)
+    # window.setWindowFlags(Qt.WindowStaysOnTopHint)
     window.show()
     app.exec_()
+    sys.exit()
 
 if __name__ == "__main__":
     main()

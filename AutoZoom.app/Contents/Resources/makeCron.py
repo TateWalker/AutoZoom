@@ -17,10 +17,12 @@ def main(classes):
     if classes == {}:
         return
     for i in classes.keys():
+        # print(classes[i])
         url =classes[i]['link']
         days = classes[i]['days']
-        days = [i for i, elem in enumerate(days) if (elem == 1)]
-        
+        if url == '' or days == '':
+            continue
+        days = [j for j, elem in enumerate(days) if (elem == 1)]
         start_time = classes[i]['start_time']
         end_time = classes[i]['end_time']
         s_t = timedelta(hours=start_time[0],minutes=start_time[1])
@@ -35,8 +37,8 @@ def main(classes):
         job = cron.new(command=cron_instructions,comment = 'autozoom')
         job.hour.on(start_time[0])
         job.minute.on(start_time[1])
-        for i in range(len(days)):
-            job.dow.also.on(days[i])
+        for k in range(len(days)):
+            job.dow.also.on(days[k])
         cron.write()
 
         #FOR THE FIRST CLASS, WE CAN SET THE PMSET, BUT FOR EVERY ONE AFTER THAT, WE NEED TO MAKE A CRON THAT CHANGES PMSET AT THE END OF EACH PROGRAM RUN
@@ -56,18 +58,24 @@ def main(classes):
             temp_time= time(hour=j[0],minute=j[1]-5)
             cron_instructions = 'pmset wakeorpoweron {} {}'.format(possible_days[dow],temp_time)
         return cron_instructions
-
     for i in range(7): #incrementing through days to find class order
         times = []
         end_times = []
         for j in classes.keys():
             if classes[j]['days'][i] == 1:
                 times.append(classes[j]['start_time'])
+
+
                 end_times.append(classes[j]['end_time'])
         times = (sorted(times))
         ordered_times[i] = times
-    # print(ordered_times)
-            
+    def check_if_empty_2(list_of_lists):
+        return all([not elem for elem in list_of_lists ])
+    if check_if_empty_2(ordered_times):
+        return
+    
+    # if not ordered_times:
+    #     print('blah')
     for i in range(0,len(ordered_times)): #goes through each day
         h=i #things are probably going to break if there isn't anything on sunday
         if not ordered_times[h]:
@@ -90,7 +98,6 @@ def main(classes):
                 except:
                     continue
 
-            # print(getInstruction(j,h))
             job = cron.new(command=getInstruction(j,h),comment = 'autozoom')
             job.hour.on(ordered_times[i][k][0])
             job.minute.on(ordered_times[i][k][1])
@@ -111,13 +118,13 @@ def main(classes):
         return wrong_day
 
     day_of_week = fixDate(date.today().weekday())
+
     # print('day of week = {}'.format(day_of_week))
     while not ordered_times[day_of_week]:
         if day_of_week == 6:
             day_of_week=-1
         day_of_week+=1
     items = ordered_times[day_of_week]
-    # print(items)
     if day_of_week != fixDate(date.today().weekday()):
         next_time = items[0]
     else:
@@ -142,25 +149,13 @@ def main(classes):
         else:
             next_time = temp_times[temp_times.index(cur_time)+1]
 
-    
     job = cron.new(command=getInstruction(next_time,day_of_week),comment = 'autozoom')
-    # print(getInstruction(next_time,day_of_week))
     job.hour.on(datetime.now().time().hour)
     job.minute.on(datetime.now().time().minute)
     job.dow.on(fixDate(date.today().weekday()))
     cron.write()        
-
-            #NEED TO REWRITE SO IT KEEPS RECORD OF ALL TIMES NOT JUST DAY BY DAY
-            #THEN USE CURRENT LOGIC TO GET NEXT CLASS TIME AND SET PMSET
-            #FIND CLOSEST CLASSTIME TO NOW AND GO AHEAD AND SET THAT PMSET
-
     
-    # call(["pmset repeat wakeorpoweron {} {}".format(days_string,)])
-
 
 
 if __name__ == '__main__':
     main()
-
-
-    #FIGURE OUT WHY CWD GOES TO RESOURCES AND NOT TO MACOS BECAUSE YOU CANT RUN THE PROGRAM WHEN IN THE WRONG FOLDER
