@@ -18,18 +18,22 @@ def main(key):
         l_file = json.load(f)
         f.close()
         license = LicenseKey.load_from_string(pubKey,l_file)
-        if license:
+        if license == None or not Helpers.IsOnRightMachine(license):
             # print('Valid License!')
-            return True, ''
-        else:
             raise ValueError('no license file')
-
+        else:
+            return True, ''
+            
     except:
-        res = Key.activate(token="WyIxODk3NCIsIlRsd1JNVytGY1FRTndkTW9IUFAxci94UG44UXk1SVRDaXVheExLMmsiXQ==",\
+        res = Key.activate(token="WyIyMTc3MiIsInZkVUJRU3NQOHpXd01FaEdzZjd6UFVuMXVwcFlTY0F3ZjFkYU9QTm4iXQ==",\
                rsa_pub_key=pubKey,\
-               product_id=6258, key=key, machine_code="")
+               product_id=6258, key=key,\
+               machine_code=Helpers.GetMachineCode())
         # print('Invalid License!')
-        if res[0] == None:
+        # print(Helpers.GetMachineCode())
+        if res[0] == None or not Helpers.IsOnRightMachine(res[0]):
+            # print(Helpers.IsOnRightMachine(res[0]))
+            # print(res[0])
             return False,''
         else:
             saved_license = res[0].save_as_string()
