@@ -30,10 +30,13 @@ def main(key):
                product_id=6258, key=key,\
                machine_code=Helpers.GetMachineCode())
         # print('Invalid License!')
-        # print(Helpers.GetMachineCode())
+        print(key)
+        print(Helpers.GetMachineCode())
+        print(res[0])
+        print(res[1])
         if res[0] == None or not Helpers.IsOnRightMachine(res[0]):
             # print(Helpers.IsOnRightMachine(res[0]))
-            # print(res[0])
+            print(res[0])
             return False,''
         else:
             saved_license = res[0].save_as_string()
