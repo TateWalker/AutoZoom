@@ -187,7 +187,7 @@ class KeyWindow(QDialog):
         self.key_input.returnPressed.connect(self.checkKey)
 
     def checkKey(self):
-        activated, message = keyValidation.main(self.key_input.text())
+        activated, message = keyValidation.main(self.key_input.text().strip())
         if activated == False:
             self.prompt.setText('Invalid key. Please enter a valid key below.')
         if activated == True:
