@@ -18,7 +18,7 @@ def main(classes):
         return
     for i in classes.keys():
         # print(classes[i])
-        url =classes[i]['link']
+        url =classes[i]['link'].strip()
         days = classes[i]['days']
         if url == '' or days == '':
             continue
@@ -39,6 +39,7 @@ def main(classes):
         job.minute.on(start_time[1])
         for k in range(len(days)):
             job.dow.also.on(days[k])
+        # print(job)
         cron.write()
 
         #FOR THE FIRST CLASS, WE CAN SET THE PMSET, BUT FOR EVERY ONE AFTER THAT, WE NEED TO MAKE A CRON THAT CHANGES PMSET AT THE END OF EACH PROGRAM RUN
@@ -58,6 +59,7 @@ def main(classes):
             temp_time= time(hour=j[0],minute=j[1]-5)
             cron_instructions = 'pmset wakeorpoweron {} {}'.format(possible_days[dow],temp_time)
         return cron_instructions
+
     for i in range(7): #incrementing through days to find class order
         times = []
         end_times = []

@@ -3,7 +3,6 @@ from licensing.methods import Key, Helpers
 import json
 import os
 from os import path
-import sys
 
 def main(key):
 
@@ -35,6 +34,7 @@ def main(key):
         else:
             saved_license = res[0].save_as_string()
             with open(path_to_license,'w') as f:
+                # print(path_to_license)
                 json.dump(saved_license,f)
             with open(path_to_key,'w') as f:
                 f.write(key)

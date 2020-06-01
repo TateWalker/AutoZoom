@@ -1,7 +1,7 @@
 import sys
+import os
 from os import path
 import json
-sys.path.insert(1, 'lib')
 import PyQt5
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -64,7 +64,7 @@ class Tab(QWidget):
             self.days_layout.addWidget(QLabel(day),1,count,Qt.AlignCenter)
 
 def getPath(filename):
-        bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))
+        bundle_dir = os.getcwd()
         path_to_file = path.join(bundle_dir, filename)
         return path_to_file
 
@@ -143,7 +143,10 @@ class KeyWindow(QDialog):
     def __init__(self, *args, **kwargs):
         super(KeyWindow, self).__init__(*args, **kwargs)
         # self.setWindowModality(Qt.ApplicationModal)
+        
+
         keyFile = getPath('.keyFile')
+        # print(keyFile)
         self.key = ''
         try:
             f = open(keyFile,'r')
@@ -215,6 +218,8 @@ class MainWindow(QMainWindow):
         self.init_ui()
         self.loadConfig()
         self.updateTabNames()
+        # self.setFixedSize(self.size())
+
 
     def showDialog(self):
         KeyWindow()
@@ -232,13 +237,12 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         self.classes = {}
-        self.resize(600, 200)
+        self.resize(600, 260)
         self.center()
-        self.setFixedSize(self.size())
         self.setWindowTitle("AutoZoom")
         self.tabWidget = QTabWidget()
         self.tabWidget.tabBar().setSelectionBehaviorOnRemove(1)
-        icon_location = getPath('autoZoomIcon.png')
+        icon_location = getPath('autoZoomIcon.icns')
         self.setWindowIcon(QIcon(icon_location))
         self.layout1 = QVBoxLayout()
         add_remove_layout = QHBoxLayout()
@@ -301,12 +305,11 @@ class MainWindow(QMainWindow):
         z = (self.tabWidget.currentIndex(),)
         for i in range(tab_count):
             current_tab = self.tabWidget.widget(i)
-            class_name = current_tab.class_name.text() #text in the input field
-    
+            class_name = current_tab.class_name.text().strip() #text in the input field
             for j in range(tab_count):
                 self.tabWidget.setCurrentIndex(j)
                 current_widg = self.tabWidget.widget(j)
-                current_class_name = current_widg.class_name.text()
+                current_class_name = current_widg.class_name.text().strip()
 
                 if class_name == current_class_name: #or class_name in self.classes.keys():
                     if current_widg != current_tab: #if current tab isnt the saving tab
@@ -322,9 +325,17 @@ class MainWindow(QMainWindow):
                         self.updateTabNames()
                         self.tabWidget.setCurrentWidget(self.tabWidget.widget(z[0]))
                         return 1
-            if current_tab.class_name.text() != '':
-               self.classes[class_name] = self.classes.pop(self.tabWidget.tabText(i)) #overwrites current class name w new one. For updating names and links
-            
+            if current_tab.class_name.text().strip() != '':
+                self.classes[class_name] = self.classes.pop(self.tabWidget.tabText(i)) #overwrites current class name w new one. For updating names and links
+            else:
+                WarningDialog('You can\'t have an empty class name!')
+                self.tabWidget.setCurrentWidget(current_tab) #set the current tab = saving tab
+                self.updateTabNames()
+                self.tabWidget.setCurrentWidget(self.tabWidget.widget(z[0]))
+                current_tab.class_name.setText(self.tabWidget.tabText(i))
+
+                return 1
+
             zoom_link = current_tab.zoom_link.text()
             checked = [None]*7
             for j in range(0,7):
@@ -340,11 +351,12 @@ class MainWindow(QMainWindow):
             self.classes[class_name]['days'] = checked
             self.classes[class_name]['start_time'] = [start_time.hour(), start_time.minute()]
             self.classes[class_name]['end_time'] = [end_time.hour(), end_time.minute()]
+
         self.tabWidget.setCurrentWidget(self.tabWidget.widget(z[0]))
 
     def updateTabNames(self):
         for i in range(0,self.tabWidget.count()):
-            if 'Class' in self.tabWidget.tabText(i):
+            if self.tabWidget.tabText(i).startswith('Class'):
                 title = 'Class {}'.format(i+1)
                 self.classes[title] = self.classes.pop(self.tabWidget.tabText(i))
                 self.tabWidget.setTabText(i,title)
@@ -371,11 +383,19 @@ class MainWindow(QMainWindow):
             success = self.saveData()
             if success == 1:
                 event.ignore()
-        config_file = getPath('.config')
-        with open(config_file,'w') as json_file:
-            json.dump(self.classes, json_file)
-        QMainWindow.closeEvent(self, event)
-        makeCron.main(self.classes)
+            else:
+                config_file = getPath('.config')
+                with open(config_file,'w') as json_file:
+                    json.dump(self.classes, json_file)
+                QMainWindow.closeEvent(self, event)
+                makeCron.main(self.classes)
+
+        else:
+            config_file = getPath('.config')
+            with open(config_file,'w') as json_file:
+                json.dump(self.classes, json_file)
+            QMainWindow.closeEvent(self, event)
+            makeCron.main(self.classes)
 
 
 def main():
