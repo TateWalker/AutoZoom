@@ -16,6 +16,10 @@ __pycache__/
 .bash_profile/
 
 
+#personal
+branding/
+AutoZoom\ Instructions.pdf
+
 # Distribution / packaging
 .Python
 Python.sublime-workspace

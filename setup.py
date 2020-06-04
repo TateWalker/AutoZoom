@@ -9,8 +9,9 @@ from setuptools import setup
 
 APP = ['AutoZoom.py']
 APP_NAME = 'AutoZoom'
-DATA_FILES = ['realZoom.sh','zoom.sh']
-OPTIONS = {'iconfile': 'autoZoomIcon.icns',
+DATA_FILES = []
+OPTIONS = {'iconfile': 'autozoom/assets/autoZoomIcon.icns',
+			'resources': ['autozoom'],
 			'plist': {
 			        'CFBundleName': APP_NAME,
 			        'CFBundleDisplayName': APP_NAME,
