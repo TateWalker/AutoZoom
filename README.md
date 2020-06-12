@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="branding/autoZoomIcon.png" alt="AutoZoom" width="25%"/>
+	<img src="../../projectResources/AutoZoom/autoZoomIcon.png" alt="AutoZoom" width="25%"/>
 </p>
 
 # AutoZoom Instructions
@@ -10,11 +10,11 @@ AutoZoom is a small tool to allow you to automatically join and leave Zoom calls
 
 ## Installation
 
-To install AutoZoom, drag the application into your Applications folder. When you first try and run the program, your computer will say that it's from an unidentified developer. To fix this, go to `System Preferences > Security & Privacy > General` and click `Open anyway` on the bottom. It will only make you do this once.
+To install AutoZoom, drag the application into your Applications folder.
 
 ## Usage
 
-1. AutoZoom only works with Firefox or Chrome as your default brower. If you've never opened a Zoom link before, you'll need to run the program and then click one. It will take you to your internet browser where you can check `Always open this type of link with Zoom`. After that, everything will run fine!
+1. AutoZoom only works with Firefox or Chrome as your default brower. If you've never opened a Zoom link before, you'll need to click a Zoom link first. It will take you to your internet browser where you can check `Always open this type of link with Zoom`. After that, everything will run fine!
 
 2. For this application to run properly, you need to disable the computer from asking you for a password when it wakes up. This can be done in `System Preferences > Security & Privacy > General` and unchecking `Require password [] after sleep or screen saver begins`
 
