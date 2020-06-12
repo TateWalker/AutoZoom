@@ -24,7 +24,7 @@ def main(key):
             return True, ''
             
     except:
-        res,mess = Key.activate(token="WyIyMTc4OSIsImdrdzI5Y2VVTXhPZFI3RWhCRXZESUY3OXh2VnBFZjFoM0ZwQU5JblMiXQ==",\
+        res,mess = Key.activate(token="WyIyMjkwNiIsIkZoZWRHeno4K3g2UXl1T2ZzMnJzNDRybkpTMTcyVkdmYURsZUYyL0siXQ==",\
                rsa_pub_key=pubKey,\
                product_id=6258, key=key,\
                machine_code=Helpers.GetMachineCode())
