@@ -7,10 +7,13 @@ import PyQt5
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5 import QtSvg
 
 from . import restoreSettings
 from . import keyValidation
 from . import makeCron
+
+PyQt5.QtWidgets.QApplication.setAttribute(PyQt5.QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class Tab(QWidget):
 
@@ -140,6 +143,52 @@ class ClearDialog(WarningDialog):
         self.canceled = False
         self.hide()
 
+class HelpWindow(QDialog):
+
+    def __init__(self, *args, **kwargs):
+        super(HelpWindow, self).__init__(*args, **kwargs)
+        self.init_ui()
+        self.setLayout(self.layout1)
+        self.exec()
+
+    def init_ui(self):
+
+        instruction_file = getPath('assets/instructions.png')
+        self.resize(1100, 800)
+        self.center()
+        self.setFixedSize(self.size())
+        self.setWindowTitle("Welcome to AutoZoom!")
+        self.layout1 = QVBoxLayout()
+        self.layout2 = QHBoxLayout()
+        self.confirmation = QPushButton('Ok', self)
+        self.prompt = QLabel()
+        self.prompt.setScaledContents(True)
+        pixmap = QPixmap(instruction_file)
+        self.prompt.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+        self.layout2.addSpacing(500)
+        self.layout1.addWidget(self.prompt)
+        self.layout1.addLayout(self.layout2)
+        self.layout2.addWidget(self.confirmation)
+        self.layout2.addSpacing(500)
+        self.confirmation.clicked.connect(self.closeEvent)
+
+    def closeEvent(self,event):
+        self.hide()
+
+    def center(self):
+        # geometry of the main window
+        qr = self.frameGeometry()
+
+        # center point of screen
+        cp = QDesktopWidget().availableGeometry().center()
+
+        # move rectangle's center point to screen's center point
+        qr.moveCenter(cp)
+
+        # top left of rectangle becomes top left of window centering it
+        self.move(qr.topLeft())
+
 class KeyWindow(QDialog):
     def __init__(self, *args, **kwargs):
         super(KeyWindow, self).__init__(*args, **kwargs)
@@ -147,7 +196,7 @@ class KeyWindow(QDialog):
         
 
         keyFile = getPath('data/.keyFile')
-        # print(keyFile)
+        
         self.key = ''
         try:
             f = open(keyFile,'r')
@@ -223,6 +272,11 @@ class MainWindow(QMainWindow):
 
 
     def showDialog(self):
+        keyFile = getPath('data/.keyFile')
+        if not path.isfile(keyFile):
+            
+            HelpWindow()
+        
         KeyWindow()
 
     def loadConfig(self):
@@ -232,40 +286,91 @@ class MainWindow(QMainWindow):
                 self.classes = json.load(json_file)
                 restoreSettings.main(qApp,self.classes)
                 if self.classes == {}:
+                    
                     self.addClass()
         except:
+            
             self.addClass()        
 
     def init_ui(self):
         self.classes = {}
-        self.resize(600, 260)
-        # self.setFixedSize(self.size())
+        self.resize(600, 280)
+        self.setFixedSize(self.size())
         self.center()
         self.setWindowTitle("AutoZoom")
         self.tabWidget = QTabWidget()
+        
+
+        # self.tabWidget.tabBar().setMinimumSize(QSize(100,10))
+        # self.tabWidget.setUsesScrollButtons(False)
+        # self.tabWidget.setMovable(False)
         self.tabWidget.tabBar().setSelectionBehaviorOnRemove(1)
-        icon_location = getPath('assets/autoZoomIcon.icns')
-        self.setWindowIcon(QIcon(icon_location))
+
         self.layout1 = QVBoxLayout()
+        
         add_remove_layout = QHBoxLayout()
-        self.layout1.addLayout(add_remove_layout)
         add_class_button = QPushButton('Add Class', self)
         remove_class_button = QPushButton('Remove Class', self)
         add_remove_layout.addWidget(add_class_button)
         add_remove_layout.addWidget(remove_class_button)
+        
+        self.layout1.addLayout(add_remove_layout)
         self.layout1.addWidget(self.tabWidget)
         add_class_button.clicked.connect(self.addClass)
         remove_class_button.clicked.connect(self.removeClass)
         save_button = QPushButton('Save',self)
-        self.layout1.addWidget(save_button)
+        icon_path = getPath('assets/question.svg')
+        help_button = QtSvg.QSvgWidget(icon_path)
+
+        contact_button = QPushButton('Contact',self)
+        bottom_button_layout = QGridLayout()
+        bottom_button_layout.setColumnStretch(0,100)
+        bottom_button_layout.setColumnStretch(1,10)
+        bottom_button_layout.setColumnStretch(2,5)
+        # bottom_button_layout.setHorizontalSpacing(10)
+        bottom_button_layout.addWidget(save_button,0,0)
+        bottom_button_layout.addWidget(contact_button,0,1)
+        bottom_button_layout.addWidget(help_button,0,2)
+        self.layout1.addLayout(bottom_button_layout)
         save_button.clicked.connect(self.saveData)
+        self.clickable(help_button).connect(self.openHelp)
+        contact_button.clicked.connect(self.contactDev)
         
         widget = QWidget()
         widget.setLayout(self.layout1)
 
         self.setCentralWidget(widget)
 
+    def openHelp(self):
+        HelpWindow()
+
+    def clickable(self,widg):
+        
+        class Filter(QObject):
+        
+            clicker = pyqtSignal()
+            
+            def eventFilter(self, obj, event):
+           
+                if obj == widg:
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if obj.rect().contains(event.pos()):
+                            self.clicker.emit()
+                           # The developer can opt for .emit(obj) to get the object within the slot.
+                            return True
+               
+                return False
+       
+        filter = Filter(widg)
+        widg.installEventFilter(filter)
+        return filter.clicker
+
+    def contactDev(self):
+        email = QUrl('mailto::tatewalker@pm.me?subject=AutoZoom')
+        QDesktopServices.openUrl(email)
+
     def addClass(self):
+        
         self.updateTabNames()
         if self.tabWidget.count() == 7: 
             WarningDialog('You can\'t have more than 7 classes.')
