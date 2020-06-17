@@ -19,7 +19,7 @@ __pycache__/
 #personal
 #branding/
 AutoZoom\ Instructions.pdf
-
+autozoom/data/.*
 # Distribution / packaging
 .Python
 Python.sublime-workspace
