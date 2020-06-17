@@ -19,7 +19,7 @@ OPTIONS = {'iconfile': 'autozoom/assets/autoZoomIcon.icns',
 			        'CFBundleIdentifier': "com.tatewalker.osx.autozoom",
 			        'CFBundleVersion': "1.3.0",
 			        'CFBundleShortVersionString': "1.3.0",
-#			        'NSRequiresAquaSystemAppearance':'false',
+			        'NSRequiresAquaSystemAppearance':'false',
 			        'CFBundlePackageType':'APPL',
 			        'NSHumanReadableCopyright': u"Copyright © 2020, Tate Walker, All Rights Reserved"
 			    }

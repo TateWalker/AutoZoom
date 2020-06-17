@@ -13,7 +13,7 @@ from . import restoreSettings
 from . import keyValidation
 from . import makeCron
 
-# PyQt5.QtWidgets.QApplication.setAttribute(PyQt5.QtCore.Qt.AA_EnableHighDpiScaling, True)
+PyQt5.QtWidgets.QApplication.setAttribute(PyQt5.QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class Tab(QWidget):
 
@@ -196,7 +196,7 @@ class KeyWindow(QDialog):
         
 
         keyFile = getPath('data/.keyFile')
-        # print(keyFile)
+        
         self.key = ''
         try:
             f = open(keyFile,'r')
@@ -274,9 +274,9 @@ class MainWindow(QMainWindow):
     def showDialog(self):
         keyFile = getPath('data/.keyFile')
         if not path.isfile(keyFile):
-            print('hererererererererer')
+            
             HelpWindow()
-        print('aaaaaaaaaaaa')
+        
         KeyWindow()
 
     def loadConfig(self):
@@ -286,10 +286,10 @@ class MainWindow(QMainWindow):
                 self.classes = json.load(json_file)
                 restoreSettings.main(qApp,self.classes)
                 if self.classes == {}:
-                    print('bananas')
+                    
                     self.addClass()
         except:
-            print('exception bananas')
+            
             self.addClass()        
 
     def init_ui(self):
@@ -299,17 +299,21 @@ class MainWindow(QMainWindow):
         self.center()
         self.setWindowTitle("AutoZoom")
         self.tabWidget = QTabWidget()
+        
+
+        # self.tabWidget.tabBar().setMinimumSize(QSize(100,10))
+        # self.tabWidget.setUsesScrollButtons(False)
+        # self.tabWidget.setMovable(False)
         self.tabWidget.tabBar().setSelectionBehaviorOnRemove(1)
-        # icon_location = getPath('assets/autoZoomIcon.icns')
-        # self.setWindowIcon(QIcon(icon_location))
+
         self.layout1 = QVBoxLayout()
-        print('hooplahhh')
+        
         add_remove_layout = QHBoxLayout()
         add_class_button = QPushButton('Add Class', self)
         remove_class_button = QPushButton('Remove Class', self)
         add_remove_layout.addWidget(add_class_button)
         add_remove_layout.addWidget(remove_class_button)
-        print('asdfasdfasdfasdfasdfasdfasdfasdf')
+        
         self.layout1.addLayout(add_remove_layout)
         self.layout1.addWidget(self.tabWidget)
         add_class_button.clicked.connect(self.addClass)
@@ -345,7 +349,7 @@ class MainWindow(QMainWindow):
         class Filter(QObject):
         
             clicker = pyqtSignal()
-            print('clickable')   
+            
             def eventFilter(self, obj, event):
            
                 if obj == widg:
@@ -366,7 +370,7 @@ class MainWindow(QMainWindow):
         QDesktopServices.openUrl(email)
 
     def addClass(self):
-        print('added class')
+        
         self.updateTabNames()
         if self.tabWidget.count() == 7: 
             WarningDialog('You can\'t have more than 7 classes.')
