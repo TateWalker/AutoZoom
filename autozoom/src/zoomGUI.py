@@ -10,7 +10,6 @@ from PyQt5.QtCore import *
 from PyQt5 import QtSvg
 
 from . import restoreSettings
-from . import keyValidation
 from . import makeCron
 
 PyQt5.QtWidgets.QApplication.setAttribute(PyQt5.QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -63,7 +62,7 @@ class Tab(QWidget):
                     self.day_widgets[count].setChecked(True)
             except:
                 pass
-            
+
             self.days_layout.addWidget(self.day_widgets[count],0,count,Qt.AlignCenter)
             self.days_layout.addWidget(QLabel(day),1,count,Qt.AlignCenter)
 
@@ -189,95 +188,18 @@ class HelpWindow(QDialog):
         # top left of rectangle becomes top left of window centering it
         self.move(qr.topLeft())
 
-class KeyWindow(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(KeyWindow, self).__init__(*args, **kwargs)
-        # self.setWindowModality(Qt.ApplicationModal)
-        
 
-        keyFile = getPath('data/.keyFile')
-        
-        self.key = ''
-        try:
-            f = open(keyFile,'r')
-            self.key = f.read()
-            f.close()
-            activated, message = keyValidation.main(self.key)
-            if activated:
-                return
-            else:
-                self.init_ui()
-                self.setLayout(self.layout1)
-                self.exec()
-        except:
-            self.init_ui()
-            self.setLayout(self.layout1)
-            self.exec()
-
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape:
-            sys.exit()
-        
-
-    def init_ui(self):
-        self.resize(600, 100)
-        self.center()
-        self.setFixedSize(self.size())
-        self.setWindowTitle("AutoZoom")
-        self.layout1 = QVBoxLayout()
-        self.layout2 = QHBoxLayout()
-        self.key_input = QLineEdit()
-        self.prompt = QLabel('Please enter your key below. Press Enter to confirm.')
-        self.prompt.setAlignment(Qt.AlignCenter)
-        self.layout2.addSpacing(100)
-        self.layout1.addWidget(self.prompt)
-        self.layout1.addLayout(self.layout2)
-        self.layout2.addWidget(self.key_input)
-        self.layout2.addSpacing(100)
-        self.key_input.returnPressed.connect(self.checkKey)
-
-    def checkKey(self):
-        activated, message = keyValidation.main(self.key_input.text().strip())
-        if activated == False:
-            self.prompt.setText('{} Please try a different key.'.format(message))
-        if activated == True:
-            self.hide()
-
-
-    def center(self):
-        # geometry of the main window
-        qr = self.frameGeometry()
-
-        # center point of screen
-        cp = QDesktopWidget().availableGeometry().center()
-
-        # move rectangle's center point to screen's center point
-        qr.moveCenter(cp)
-
-        # top left of rectangle becomes top left of window centering it
-        self.move(qr.topLeft())
-
-    def closeEvent(self,event):
-        sys.exit()
 
 class MainWindow(QMainWindow):
-      
+
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.showDialog()
         self.init_ui()
         self.loadConfig()
         self.updateTabNames()
         self.setFixedSize(self.size())
 
 
-    def showDialog(self):
-        keyFile = getPath('data/.keyFile')
-        if not path.isfile(keyFile):
-            
-            HelpWindow()
-        
-        KeyWindow()
 
     def loadConfig(self):
         config_file = getPath('data/.config')
@@ -286,11 +208,11 @@ class MainWindow(QMainWindow):
                 self.classes = json.load(json_file)
                 restoreSettings.main(qApp,self.classes)
                 if self.classes == {}:
-                    
+
                     self.addClass()
         except:
-            
-            self.addClass()        
+
+            self.addClass()
 
     def init_ui(self):
         self.classes = {}
@@ -299,7 +221,7 @@ class MainWindow(QMainWindow):
         self.center()
         self.setWindowTitle("AutoZoom")
         self.tabWidget = QTabWidget()
-        
+
 
         # self.tabWidget.tabBar().setMinimumSize(QSize(100,10))
         # self.tabWidget.setUsesScrollButtons(False)
@@ -307,13 +229,13 @@ class MainWindow(QMainWindow):
         self.tabWidget.tabBar().setSelectionBehaviorOnRemove(1)
 
         self.layout1 = QVBoxLayout()
-        
+
         add_remove_layout = QHBoxLayout()
         add_class_button = QPushButton('Add Class', self)
         remove_class_button = QPushButton('Remove Class', self)
         add_remove_layout.addWidget(add_class_button)
         add_remove_layout.addWidget(remove_class_button)
-        
+
         self.layout1.addLayout(add_remove_layout)
         self.layout1.addWidget(self.tabWidget)
         add_class_button.clicked.connect(self.addClass)
@@ -335,7 +257,7 @@ class MainWindow(QMainWindow):
         save_button.clicked.connect(self.saveData)
         self.clickable(help_button).connect(self.openHelp)
         contact_button.clicked.connect(self.contactDev)
-        
+
         widget = QWidget()
         widget.setLayout(self.layout1)
 
@@ -345,22 +267,22 @@ class MainWindow(QMainWindow):
         HelpWindow()
 
     def clickable(self,widg):
-        
+
         class Filter(QObject):
-        
+
             clicker = pyqtSignal()
-            
+
             def eventFilter(self, obj, event):
-           
+
                 if obj == widg:
                     if event.type() == QEvent.MouseButtonRelease:
                         if obj.rect().contains(event.pos()):
                             self.clicker.emit()
                            # The developer can opt for .emit(obj) to get the object within the slot.
                             return True
-               
+
                 return False
-       
+
         filter = Filter(widg)
         widg.installEventFilter(filter)
         return filter.clicker
@@ -370,9 +292,9 @@ class MainWindow(QMainWindow):
         QDesktopServices.openUrl(email)
 
     def addClass(self):
-        
+
         self.updateTabNames()
-        if self.tabWidget.count() == 7: 
+        if self.tabWidget.count() == 7:
             WarningDialog('You can\'t have more than 7 classes.')
             return
         tab = Tab()
@@ -398,7 +320,7 @@ class MainWindow(QMainWindow):
                 self.classes.pop(self.tabWidget.tabText(tab_ind))
                 self.tabWidget.removeTab(tab_ind)
                 self.close()
-                
+
         else:
             self.classes.pop(self.tabWidget.tabText(tab_ind))
             self.tabWidget.removeTab(tab_ind)
@@ -421,13 +343,13 @@ class MainWindow(QMainWindow):
                 if class_name == current_class_name: #or class_name in self.classes.keys():
                     if current_widg != current_tab: #if current tab isnt the saving tab
                         """
-                        You need to see why the tab text changes after you try and change 
+                        You need to see why the tab text changes after you try and change
                         class name to an existing one. It seems like it changes even though it shouldn't
                         tha fuck is this shit. goodnight
 
                         """
                         WarningDialog('You can\'t have two classes with the same name!')
-                        
+
                         self.tabWidget.setCurrentWidget(current_widg) #set the current tab = saving tab
                         self.updateTabNames()
                         self.tabWidget.setCurrentWidget(self.tabWidget.widget(z[0]))

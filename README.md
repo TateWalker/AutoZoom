@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="../../projectResources/AutoZoom/autoZoomIcon.png" alt="AutoZoom" width="25%"/>
+	<img src="autozoom/assets/autoZoomIcon.png" alt="AutoZoom" width="25%"/>
 </p>
 
 # AutoZoom Instructions
@@ -29,4 +29,4 @@ To install AutoZoom, drag the application into your Applications folder.
 
 Please send any comments, questions, or concerns to [tatewalker@pm.me](mailto::tatewalker@pm.me)
 
-Thanks for purchasing AutoZoom! If you find it useful, please tell your friends about it!
+Thanks for using AutoZoom! If you find it useful, please tell your friends about it!
