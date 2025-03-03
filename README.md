@@ -27,6 +27,6 @@ To install AutoZoom, drag the application into your Applications folder.
 
 ## Contact
 
-Please send any comments, questions, or concerns to [tatewalker@pm.me](mailto::tatewalker@pm.me)
+Please send any comments, questions, or concerns to [tate@tatewalker.com](mailto::tate@tatewalker.com)
 
 Thanks for using AutoZoom! If you find it useful, please tell your friends about it!
